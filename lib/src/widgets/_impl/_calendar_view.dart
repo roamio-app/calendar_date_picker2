@@ -335,24 +335,54 @@ class _CalendarViewState extends State<_CalendarView> {
             child: Row(
               children: <Widget>[
                 if (config.centerAlignModePicker != true) const Spacer(),
-                IconButton(
-                  icon: config.lastMonthIcon ?? const Icon(Icons.chevron_left),
-                  color: controlColor,
-                  tooltip: _isDisplayingFirstMonth
-                      ? null
-                      : _localizations.previousMonthTooltip,
-                  onPressed:
-                      _isDisplayingFirstMonth ? null : _handlePreviousMonth,
-                ),
+                config.navigationButtonBuilder?.call(
+                      onPressed:
+                          _isDisplayingFirstMonth ? null : _handlePreviousMonth,
+                      tooltip: _isDisplayingFirstMonth
+                          ? null
+                          : _localizations.previousMonthTooltip,
+                      child: config.lastMonthIcon ??
+                          const Icon(Icons.chevron_left),
+                    ) ??
+                    Tooltip(
+                      message: _isDisplayingFirstMonth
+                          ? null
+                          : _localizations.previousMonthTooltip,
+                      child: CupertinoButton(
+                        color: controlColor,
+                        padding: EdgeInsets.zero,
+                        minSize: 0.0,
+                        onPressed: _isDisplayingFirstMonth
+                            ? null
+                            : _handlePreviousMonth,
+                        child: config.lastMonthIcon ??
+                            const Icon(Icons.chevron_left),
+                      ),
+                    ),
                 if (config.centerAlignModePicker == true) const Spacer(),
-                IconButton(
-                  icon: config.nextMonthIcon ?? const Icon(Icons.chevron_right),
-                  color: controlColor,
-                  tooltip: _isDisplayingLastMonth
-                      ? null
-                      : _localizations.nextMonthTooltip,
-                  onPressed: _isDisplayingLastMonth ? null : _handleNextMonth,
-                ),
+                config.navigationButtonBuilder?.call(
+                      onPressed:
+                          _isDisplayingLastMonth ? null : _handleNextMonth,
+                      tooltip: _isDisplayingLastMonth
+                          ? null
+                          : _localizations.nextMonthTooltip,
+                      child: config.nextMonthIcon ??
+                          const Icon(Icons.chevron_right),
+                    ) ??
+                    Tooltip(
+                      message: _isDisplayingLastMonth
+                          ? null
+                          : _localizations.nextMonthTooltip,
+                      child: CupertinoButton(
+                        color: controlColor,
+                        padding: EdgeInsets.zero,
+                        minSize: 0.0,
+                        onPressed:
+                            _isDisplayingLastMonth ? null : _handleNextMonth,
+                        child: config.nextMonthIcon ??
+                            const Icon(Icons.chevron_right),
+                      ),
+                    ),
               ],
             ),
           ),

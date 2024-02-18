@@ -22,7 +22,6 @@ class CalendarStyle {
     this.okButtonTextStyle,
     this.buttonPadding,
     this.gapBetweenCalendarAndButtons = 8.0,
-    this.splashFactory = InkRipple.splashFactory,
     this.splashRadius = 24.0,
     this.yearPickerRowHeight = 52.0,
     this.yearPickerRowSpacing = 8.0,
@@ -127,10 +126,6 @@ class CalendarStyle {
   /// Defaults to 40.0.
   ///
   final double dayCellHeight;
-
-  /// Splash Factory of the [InkResponse] widget that responds to tap.
-  ///
-  final InteractiveInkFeatureFactory? splashFactory;
 
   /// The splash radius of the [InkResponse] widget that responds to tap.
   ///

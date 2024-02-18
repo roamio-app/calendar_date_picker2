@@ -32,6 +32,12 @@ typedef CalendarYearBuilder = Widget? Function({
   bool? isCurrentYear,
 });
 
+typedef CalendarButtonBuilder = Widget Function({
+  required VoidCallback? onPressed,
+  required String? tooltip,
+  required Widget? child,
+});
+
 typedef CalendarModePickerTextHandler = String? Function({
   required DateTime monthDate,
 });
@@ -55,6 +61,7 @@ class CalendarConfig {
     this.customModePickerIcon,
     this.modePickerTextHandler,
     this.rangeBidirectional = false,
+    this.navigationButtonBuilder,
   })  : firstDate = DateUtils.dateOnly(firstDate ?? DateTime(1970)),
         lastDate =
             DateUtils.dateOnly(lastDate ?? DateTime(DateTime.now().year + 50)),
@@ -105,13 +112,18 @@ class CalendarConfig {
   /// Custom icon for the mode picker button icon
   final Widget? customModePickerIcon;
 
-  /// Function to control mode picker displayed text
+  /// Function to control mode picker displayed text.
+  ///
   final CalendarModePickerTextHandler? modePickerTextHandler;
 
   /// Whether the range selection can be also made in reverse-chronological
   /// order.
   /// Only applicable when [calendarType] is [CalendarType.range].
   final bool rangeBidirectional;
+
+  /// Builder for previous and next month buttons.
+  ///
+  final CalendarButtonBuilder? navigationButtonBuilder;
 
   CalendarConfig copyWith({
     CalendarType? calendarType,
@@ -131,6 +143,7 @@ class CalendarConfig {
     Widget? customModePickerIcon,
     CalendarModePickerTextHandler? modePickerTextHandler,
     bool? rangeBidirectional,
+    CalendarButtonBuilder? navigationButtonBuilder,
   }) {
     return CalendarConfig(
       calendarType: calendarType ?? this.calendarType,
@@ -154,6 +167,8 @@ class CalendarConfig {
       modePickerTextHandler:
           modePickerTextHandler ?? this.modePickerTextHandler,
       rangeBidirectional: rangeBidirectional ?? this.rangeBidirectional,
+      navigationButtonBuilder:
+          navigationButtonBuilder ?? this.navigationButtonBuilder,
     );
   }
 }
@@ -177,6 +192,7 @@ class CalendarWithActionButtonsConfig extends CalendarConfig {
     super.customModePickerIcon,
     super.modePickerTextHandler,
     super.rangeBidirectional = false,
+    super.navigationButtonBuilder,
     this.cancelButton,
     this.okButton,
     this.openedFromDialog,
@@ -229,6 +245,7 @@ class CalendarWithActionButtonsConfig extends CalendarConfig {
     bool? closeDialogOnCancelTapped,
     bool? closeDialogOnOkTapped,
     EdgeInsets? buttonPadding,
+    CalendarButtonBuilder? navigationButtonBuilder,
   }) {
     return CalendarWithActionButtonsConfig(
       calendarType: calendarType ?? this.calendarType,
@@ -258,6 +275,7 @@ class CalendarWithActionButtonsConfig extends CalendarConfig {
           closeDialogOnCancelTapped ?? this.closeDialogOnCancelTapped,
       closeDialogOnOkTapped:
           closeDialogOnOkTapped ?? this.closeDialogOnOkTapped,
+      navigationButtonBuilder: navigationButtonBuilder ?? this.navigationButtonBuilder,
     );
   }
 }

@@ -165,9 +165,11 @@ class _YearPickerState extends State<YearPicker> {
         child: yearItem,
       );
     } else {
-      yearItem = InkWell(
+      yearItem = CupertinoButton(
         key: ValueKey<int>(year),
-        onTap: () => widget.onChanged(
+        minSize: 0.0,
+        padding: EdgeInsets.zero,
+        onPressed: () => widget.onChanged(
           DateTime(
             year,
             widget.initialMonth.month,
