@@ -91,10 +91,12 @@ class _DatePickerModeToggleButtonState
               button: true,
               child: SizedBox(
                 height: (widget.style.controlsHeight),
-                child: InkWell(
-                  onTap: widget.config.disableModePicker == true
+                child: CupertinoButton(
+                  onPressed: widget.config.disableModePicker == true
                       ? null
                       : widget.onTitlePressed,
+                  padding: EdgeInsets.zero,
+                  minSize: 0.0,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: widget.config.centerAlignModePicker == true
