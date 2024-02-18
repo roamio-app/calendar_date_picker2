@@ -311,6 +311,10 @@ class _DayPickerState extends State<_DayPicker> {
             splashColor: theme.splashColor,
             splashFactory: theme.splashFactory,
             customBorder: style.dayShapeBorder,
+            highlightShape: style.dayShapeBorder != null
+                ? BoxShape.rectangle
+                : BoxShape.circle,
+            highlightColor: theme.highlightColor,
             child: Semantics(
               // We want the day of month to be spoken first irrespective of the
               // locale-specific preferences or TextDirection. This is because
