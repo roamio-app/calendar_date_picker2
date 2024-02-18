@@ -319,8 +319,6 @@ class _CalendarViewState extends State<_CalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final controlColor = theme.colorScheme.onSurface.withOpacity(0.60);
     final config = widget.config;
     final style = widget.style;
 
