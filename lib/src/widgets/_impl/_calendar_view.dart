@@ -349,7 +349,6 @@ class _CalendarViewState extends State<_CalendarView> {
                           ? null
                           : _localizations.previousMonthTooltip,
                       child: CupertinoButton(
-                        color: controlColor,
                         padding: EdgeInsets.zero,
                         minSize: 0.0,
                         onPressed: _isDisplayingFirstMonth
@@ -374,7 +373,6 @@ class _CalendarViewState extends State<_CalendarView> {
                           ? null
                           : _localizations.nextMonthTooltip,
                       child: CupertinoButton(
-                        color: controlColor,
                         padding: EdgeInsets.zero,
                         minSize: 0.0,
                         onPressed:
