@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'CalendarDatePicker2 Demo',
+      title: 'Calendar Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         Locale('ko', ''),
         Locale('hi', ''),
       ],
-      home: const MyHomePage(title: 'CalendarDatePicker2 Demo'),
+      home: const MyHomePage(title: 'Calendar Demo'),
     );
   }
 }
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String _getValueText(
-    CalendarDatePicker2Type datePickerType,
+    CalendarType datePickerType,
     List<DateTime?> values,
   ) {
     values =
@@ -100,13 +100,13 @@ class _MyHomePageState extends State<MyHomePage> {
         .toString()
         .replaceAll('00:00:00.000', '');
 
-    if (datePickerType == CalendarDatePicker2Type.multi) {
+    if (datePickerType == CalendarType.multi) {
       valueText = values.isNotEmpty
           ? values
               .map((v) => v.toString().replaceAll('00:00:00.000', ''))
               .join(', ')
           : 'null';
-    } else if (datePickerType == CalendarDatePicker2Type.range) {
+    } else if (datePickerType == CalendarType.range) {
       if (values.isNotEmpty) {
         final startDate = values[0].toString().replaceAll('00:00:00.000', '');
         final endDate = values.length > 1
@@ -122,8 +122,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _buildCalendarDialogButton() {
-    const dayTextStyle =
-        TextStyle(color: Colors.black, fontWeight: FontWeight.w700);
     final weekendTextStyle =
         TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w600);
     final anniversaryTextStyle = TextStyle(
@@ -131,24 +129,12 @@ class _MyHomePageState extends State<MyHomePage> {
       fontWeight: FontWeight.w700,
       decoration: TextDecoration.underline,
     );
-    final config = CalendarDatePicker2WithActionButtonsConfig(
-      dayTextStyle: dayTextStyle,
-      calendarType: CalendarDatePicker2Type.range,
-      selectedDayHighlightColor: Colors.purple[800],
+    final config = CalendarWithActionButtonsConfig(
+      calendarType: CalendarType.range,
       closeDialogOnCancelTapped: true,
       firstDayOfWeek: 1,
-      weekdayLabelTextStyle: const TextStyle(
-        color: Colors.black87,
-        fontWeight: FontWeight.bold,
-      ),
-      controlsTextStyle: const TextStyle(
-        color: Colors.black,
-        fontSize: 15,
-        fontWeight: FontWeight.bold,
-      ),
       centerAlignModePicker: true,
       customModePickerIcon: const SizedBox(),
-      selectedDayTextStyle: dayTextStyle.copyWith(color: Colors.white),
       dayTextStylePredicate: ({required date}) {
         TextStyle? textStyle;
         if (date.weekday == DateTime.saturday ||
@@ -241,6 +227,29 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+
+    final style = CalendarStyle(
+      selectedDayHighlightColor: Colors.amber[900],
+      weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      weekdayLabelTextStyle: const TextStyle(
+        color: Colors.black87,
+        fontWeight: FontWeight.bold,
+      ),
+      controlsHeight: 50,
+      controlsTextStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+      ),
+      dayTextStyle: const TextStyle(
+        color: Colors.amber,
+        fontWeight: FontWeight.bold,
+      ),
+      disabledDayTextStyle: const TextStyle(
+        color: Colors.grey,
+      ),
+    );
+
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Row(
@@ -248,9 +257,10 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              final values = await showCalendarDatePicker2Dialog(
+              final values = await showCalendarDialog(
                 context: context,
                 config: config,
+                style: style,
                 dialogSize: const Size(325, 400),
                 borderRadius: BorderRadius.circular(15),
                 value: _dialogCalendarPickerValue,
@@ -275,14 +285,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildDefaultSingleDatePickerWithValue() {
-    final config = CalendarDatePicker2Config(
+    final config = CalendarConfig(
+      firstDayOfWeek: 1,
+      selectableDayPredicate: (day) => !day
+          .difference(DateTime.now().subtract(const Duration(days: 3)))
+          .isNegative,
+    );
+
+    final style = CalendarStyle(
       selectedDayHighlightColor: Colors.amber[900],
       weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       weekdayLabelTextStyle: const TextStyle(
         color: Colors.black87,
         fontWeight: FontWeight.bold,
       ),
-      firstDayOfWeek: 1,
       controlsHeight: 50,
       controlsTextStyle: const TextStyle(
         color: Colors.black,
@@ -296,17 +312,16 @@ class _MyHomePageState extends State<MyHomePage> {
       disabledDayTextStyle: const TextStyle(
         color: Colors.grey,
       ),
-      selectableDayPredicate: (day) => !day
-          .difference(DateTime.now().subtract(const Duration(days: 3)))
-          .isNegative,
     );
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 10),
         const Text('Single Date Picker (With default value)'),
-        CalendarDatePicker2(
+        Calendar(
           config: config,
+          style: style,
           value: _singleDatePickerValueWithDefaultValue,
           onValueChanged: (dates) =>
               setState(() => _singleDatePickerValueWithDefaultValue = dates),
@@ -331,17 +346,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildDefaultMultiDatePickerWithValue() {
-    final config = CalendarDatePicker2Config(
-      calendarType: CalendarDatePicker2Type.multi,
+    final config = CalendarConfig(
+      calendarType: CalendarType.multi,
+    );
+
+    const style = CalendarStyle(
       selectedDayHighlightColor: Colors.indigo,
     );
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 10),
         const Text('Multi Date Picker (With default value)'),
-        CalendarDatePicker2(
+        Calendar(
           config: config,
+          style: style,
           value: _multiDatePickerValueWithDefaultValue,
           onValueChanged: (dates) =>
               setState(() => _multiDatePickerValueWithDefaultValue = dates),
@@ -368,8 +388,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildDefaultRangeDatePickerWithValue() {
-    final config = CalendarDatePicker2Config(
-      calendarType: CalendarDatePicker2Type.range,
+    final config = CalendarConfig(
+      calendarType: CalendarType.range,
+    );
+
+    final style = CalendarStyle(
       selectedDayHighlightColor: Colors.teal[800],
       weekdayLabelTextStyle: const TextStyle(
         color: Colors.black87,
@@ -381,13 +404,15 @@ class _MyHomePageState extends State<MyHomePage> {
         fontWeight: FontWeight.bold,
       ),
     );
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 10),
         const Text('Range Date Picker (With default value)'),
-        CalendarDatePicker2(
+        Calendar(
           config: config,
+          style: style,
           value: _rangeDatePickerValueWithDefaultValue,
           onValueChanged: (dates) =>
               setState(() => _rangeDatePickerValueWithDefaultValue = dates),
@@ -412,8 +437,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildCalendarWithActionButtons() {
-    final config = CalendarDatePicker2WithActionButtonsConfig(
-      calendarType: CalendarDatePicker2Type.range,
+    final config = CalendarWithActionButtonsConfig(
+      calendarType: CalendarType.range,
       disableModePicker: true,
     );
     return Column(
@@ -421,7 +446,7 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         const SizedBox(height: 10),
         const Text('Date Picker With Action Buttons'),
-        CalendarDatePicker2WithActionButtons(
+        CalendarWithActionButtons(
           config: config,
           value: _rangeDatePickerWithActionButtonsWithValue,
           onValueChanged: (dates) => setState(

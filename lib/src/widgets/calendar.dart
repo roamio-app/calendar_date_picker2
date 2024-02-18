@@ -15,43 +15,27 @@ part '_impl/_date_picker_mode_toggle_button.dart';
 part '_impl/_day_picker.dart';
 part '_impl/_focus_date.dart';
 part '_impl/year_picker.dart';
+part '_impl/constants.dart';
 
-const Duration _monthScrollDuration = Duration(milliseconds: 200);
-
-const double _dayPickerRowHeight = 42.0;
-const int _maxDayPickerRowCount = 6; // A 31 day month that starts on Saturday.
-// One extra row for the day-of-week header.
-const double _maxDayPickerHeight =
-    _dayPickerRowHeight * (_maxDayPickerRowCount + 1);
-const double _monthPickerHorizontalPadding = 8.0;
-
-const int _yearPickerColumnCount = 3;
-const double _yearPickerPadding = 16.0;
-const double _yearPickerRowHeight = 52.0;
-const double _yearPickerRowSpacing = 8.0;
-
-const double _subHeaderHeight = 52.0;
-const double _monthNavButtonsWidth = 108.0;
-
-class CalendarDatePicker2 extends StatefulWidget {
-  CalendarDatePicker2({
+class Calendar extends StatefulWidget {
+  Calendar({
+    this.style = const CalendarStyle(),
     required this.config,
     required this.value,
     this.onValueChanged,
     this.displayedMonthDate,
     this.onDisplayedMonthChanged,
-    Key? key,
-  }) : super(key: key) {
+    super.key,
+  }) {
     const valid = true;
     const invalid = false;
 
-    if (config.calendarType == CalendarDatePicker2Type.single) {
+    if (config.calendarType == CalendarType.single) {
       assert(value.length < 2,
           'Error: single date picker only allows maximum one initial date');
     }
 
-    if (config.calendarType == CalendarDatePicker2Type.range &&
-        value.length > 1) {
+    if (config.calendarType == CalendarType.range && value.length > 1) {
       final isRangePickerValueValid = value[0] == null
           ? (value[1] != null ? invalid : valid)
           : (value[1] != null
@@ -65,26 +49,35 @@ class CalendarDatePicker2 extends StatefulWidget {
     }
   }
 
-  /// The calendar UI related configurations
-  final CalendarDatePicker2Config config;
+  /// The calendar UI related configurations.
+  ///
+  final CalendarConfig config;
+
+  /// The calendar style.
+  ///
+  final CalendarStyle style;
 
   /// The selected [DateTime]s that the picker should display.
+  ///
   final List<DateTime?> value;
 
-  /// Called when the selected dates changed
+  /// Called when the selected dates changed.
+  ///
   final ValueChanged<List<DateTime?>>? onValueChanged;
 
-  /// Date to control calendar displayed month
+  /// Date to control calendar displayed month.
+  ///
   final DateTime? displayedMonthDate;
 
-  /// Called when the displayed month changed
+  /// Called when the displayed month changed.
+  ///
   final ValueChanged<DateTime>? onDisplayedMonthChanged;
 
   @override
-  State<CalendarDatePicker2> createState() => _CalendarDatePicker2State();
+  State<Calendar> createState() => _CalendarState();
 }
 
-class _CalendarDatePicker2State extends State<CalendarDatePicker2> {
+class _CalendarState extends State<Calendar> {
   bool _announcedInitialDate = false;
   late List<DateTime?> _selectedDates;
   late DatePickerMode _mode;
@@ -108,7 +101,7 @@ class _CalendarDatePicker2State extends State<CalendarDatePicker2> {
   }
 
   @override
-  void didUpdateWidget(CalendarDatePicker2 oldWidget) {
+  void didUpdateWidget(Calendar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.config.calendarViewMode != oldWidget.config.calendarViewMode) {
       _mode = widget.config.calendarViewMode;
@@ -236,11 +229,11 @@ class _CalendarDatePicker2State extends State<CalendarDatePicker2> {
 
       final calendarType = widget.config.calendarType;
       switch (calendarType) {
-        case CalendarDatePicker2Type.single:
+        case CalendarType.single:
           selectedDates = [value];
           break;
 
-        case CalendarDatePicker2Type.multi:
+        case CalendarType.multi:
           final index =
               selectedDates.indexWhere((d) => DateUtils.isSameDay(d, value));
           if (index != -1) {
@@ -250,7 +243,7 @@ class _CalendarDatePicker2State extends State<CalendarDatePicker2> {
           }
           break;
 
-        case CalendarDatePicker2Type.range:
+        case CalendarType.range:
           if (selectedDates.isEmpty) {
             selectedDates.add(value);
             break;
@@ -279,7 +272,7 @@ class _CalendarDatePicker2State extends State<CalendarDatePicker2> {
         ..sort((d1, d2) => d1!.compareTo(d2!));
 
       final isValueDifferent =
-          widget.config.calendarType != CalendarDatePicker2Type.single ||
+          widget.config.calendarType != CalendarType.single ||
               !DateUtils.isSameDay(selectedDates[0],
                   _selectedDates.isNotEmpty ? _selectedDates[0] : null);
       if (isValueDifferent) {
@@ -293,6 +286,7 @@ class _CalendarDatePicker2State extends State<CalendarDatePicker2> {
     switch (_mode) {
       case DatePickerMode.day:
         return _CalendarView(
+          style: widget.style,
           config: widget.config,
           key: _monthPickerKey,
           initialMonth: _currentDisplayedMonthDate,
@@ -302,9 +296,9 @@ class _CalendarDatePicker2State extends State<CalendarDatePicker2> {
         );
       case DatePickerMode.year:
         return Padding(
-          padding: EdgeInsets.only(
-              top: widget.config.controlsHeight ?? _subHeaderHeight),
+          padding: EdgeInsets.only(top: widget.style.controlsHeight),
           child: YearPicker(
+            style: widget.style,
             config: widget.config,
             key: _yearPickerKey,
             initialMonth: _currentDisplayedMonthDate,
@@ -320,15 +314,17 @@ class _CalendarDatePicker2State extends State<CalendarDatePicker2> {
     assert(debugCheckHasMaterial(context));
     assert(debugCheckHasMaterialLocalizations(context));
     assert(debugCheckHasDirectionality(context));
+
     return Stack(
       children: <Widget>[
         SizedBox(
-          height: (widget.config.controlsHeight ?? _subHeaderHeight) +
-              _maxDayPickerHeight,
+          height: (widget.style.controlsHeight) +
+              widget.style.daySize.height * (_kMaxDayPickerRowCount + 1),
           child: _buildPicker(),
         ),
         // Put the mode toggle button on top so that it won't be covered up by the _CalendarView
         _DatePickerModeToggleButton(
+          style: widget.style,
           config: widget.config,
           mode: _mode,
           title: widget.config.modePickerTextHandler

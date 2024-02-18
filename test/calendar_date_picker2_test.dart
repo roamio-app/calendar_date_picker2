@@ -9,8 +9,7 @@ void main() {
     const emp = <DateTime>[];
     await widgetTester.pumpWidget(MaterialApp(
       home: Scaffold(
-        body: CalendarDatePicker2(
-            value: emp, config: CalendarDatePicker2Config()),
+        body: Calendar(value: emp, config: CalendarDatePicker2Config()),
       ),
     ));
   });

@@ -1,4 +1,4 @@
-part of '../calendar_date_picker2.dart';
+part of '../calendar.dart';
 
 /// A scrollable grid of years to allow picking a year.
 ///
@@ -16,16 +16,20 @@ part of '../calendar_date_picker2.dart';
 class YearPicker extends StatefulWidget {
   /// Creates a year picker.
   const YearPicker({
+    this.style = const CalendarStyle(),
     required this.config,
     required this.selectedDates,
     required this.onChanged,
     required this.initialMonth,
     this.dragStartBehavior = DragStartBehavior.start,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The calendar configurations
-  final CalendarDatePicker2Config config;
+  final CalendarConfig config;
+
+  /// The style of the calendar.
+  final CalendarStyle style;
 
   /// The currently selected dates.
   ///
@@ -78,7 +82,9 @@ class _YearPickerState extends State<YearPicker> {
     final int initialYearRow = initialYearIndex ~/ _yearPickerColumnCount;
     // Move the offset down by 2 rows to approximately center it.
     final int centeredYearRow = initialYearRow - 2;
-    return _itemCount < minYears ? 0 : centeredYearRow * _yearPickerRowHeight;
+    return _itemCount < minYears
+        ? 0
+        : centeredYearRow * widget.style.yearPickerRowHeight;
   }
 
   Widget _buildYearItem(BuildContext context, int index) {
@@ -101,30 +107,29 @@ class _YearPickerState extends State<YearPicker> {
     } else if (isDisabled) {
       textColor = colorScheme.onSurface.withOpacity(0.38);
     } else if (isCurrentYear) {
-      textColor =
-          widget.config.selectedDayHighlightColor ?? colorScheme.primary;
+      textColor = widget.style.selectedDayHighlightColor ?? colorScheme.primary;
     } else {
       textColor = colorScheme.onSurface.withOpacity(0.87);
     }
-    TextStyle? itemStyle = widget.config.yearTextStyle ??
+    TextStyle? itemStyle = widget.style.yearTextStyle ??
         textTheme.bodyLarge?.apply(color: textColor);
     if (isSelected) {
-      itemStyle = widget.config.selectedYearTextStyle ?? itemStyle;
+      itemStyle = widget.style.selectedYearTextStyle ?? itemStyle;
     }
 
     BoxDecoration? decoration;
     if (isSelected) {
       decoration = BoxDecoration(
-        color: widget.config.selectedDayHighlightColor ?? colorScheme.primary,
-        borderRadius: widget.config.yearBorderRadius ??
+        color: widget.style.selectedDayHighlightColor ?? colorScheme.primary,
+        borderRadius: widget.style.yearBorderRadius ??
             BorderRadius.circular(decorationHeight / 2),
       );
     } else if (isCurrentYear && !isDisabled) {
       decoration = BoxDecoration(
         border: Border.all(
-          color: widget.config.selectedDayHighlightColor ?? colorScheme.primary,
+          color: widget.style.selectedDayHighlightColor ?? colorScheme.primary,
         ),
-        borderRadius: widget.config.yearBorderRadius ??
+        borderRadius: widget.style.yearBorderRadius ??
             BorderRadius.circular(decorationHeight / 2),
       );
     }
@@ -189,10 +194,14 @@ class _YearPickerState extends State<YearPicker> {
           child: GridView.builder(
             controller: _scrollController,
             dragStartBehavior: widget.dragStartBehavior,
-            gridDelegate: _yearPickerGridDelegate,
+            gridDelegate: _YearPickerGridDelegate(
+              style: widget.style,
+            ),
             itemBuilder: _buildYearItem,
             itemCount: math.max(_itemCount, minYears),
-            padding: const EdgeInsets.symmetric(horizontal: _yearPickerPadding),
+            padding: EdgeInsets.symmetric(
+              horizontal: widget.style.yearPickerPadding,
+            ),
           ),
         ),
         const Divider(),
@@ -202,19 +211,23 @@ class _YearPickerState extends State<YearPicker> {
 }
 
 class _YearPickerGridDelegate extends SliverGridDelegate {
-  const _YearPickerGridDelegate();
+  const _YearPickerGridDelegate({
+    required this.style,
+  });
+
+  final CalendarStyle style;
 
   @override
   SliverGridLayout getLayout(SliverConstraints constraints) {
     final double tileWidth = (constraints.crossAxisExtent -
-            (_yearPickerColumnCount - 1) * _yearPickerRowSpacing) /
+            (_yearPickerColumnCount - 1) * style.yearPickerRowSpacing) /
         _yearPickerColumnCount;
     return SliverGridRegularTileLayout(
       childCrossAxisExtent: tileWidth,
-      childMainAxisExtent: _yearPickerRowHeight,
+      childMainAxisExtent: style.yearPickerRowHeight,
       crossAxisCount: _yearPickerColumnCount,
-      crossAxisStride: tileWidth + _yearPickerRowSpacing,
-      mainAxisStride: _yearPickerRowHeight,
+      crossAxisStride: tileWidth + style.yearPickerRowSpacing,
+      mainAxisStride: style.yearPickerRowHeight,
       reverseCrossAxis: axisDirectionIsReversed(constraints.crossAxisDirection),
     );
   }
@@ -222,6 +235,3 @@ class _YearPickerGridDelegate extends SliverGridDelegate {
   @override
   bool shouldRelayout(_YearPickerGridDelegate oldDelegate) => false;
 }
-
-const _YearPickerGridDelegate _yearPickerGridDelegate =
-    _YearPickerGridDelegate();

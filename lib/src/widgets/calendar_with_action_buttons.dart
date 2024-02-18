@@ -1,10 +1,11 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 
-class CalendarDatePicker2WithActionButtons extends StatefulWidget {
-  const CalendarDatePicker2WithActionButtons({
+class CalendarWithActionButtons extends StatefulWidget {
+  const CalendarWithActionButtons({
     required this.value,
     required this.config,
+    this.style = const CalendarStyle(),
     this.onValueChanged,
     this.onDisplayedMonthChanged,
     this.onCancelTapped,
@@ -21,7 +22,10 @@ class CalendarDatePicker2WithActionButtons extends StatefulWidget {
   final ValueChanged<DateTime>? onDisplayedMonthChanged;
 
   /// The calendar configurations including action buttons
-  final CalendarDatePicker2WithActionButtonsConfig config;
+  final CalendarWithActionButtonsConfig config;
+
+  /// The style of the calendar.
+  final CalendarStyle style;
 
   /// The callback when cancel button is tapped
   final Function? onCancelTapped;
@@ -30,12 +34,11 @@ class CalendarDatePicker2WithActionButtons extends StatefulWidget {
   final Function? onOkTapped;
 
   @override
-  State<CalendarDatePicker2WithActionButtons> createState() =>
-      _CalendarDatePicker2WithActionButtonsState();
+  State<CalendarWithActionButtons> createState() =>
+      _CalendarWithActionButtonsState();
 }
 
-class _CalendarDatePicker2WithActionButtonsState
-    extends State<CalendarDatePicker2WithActionButtons> {
+class _CalendarWithActionButtonsState extends State<CalendarWithActionButtons> {
   List<DateTime?> _values = [];
   List<DateTime?> _editCache = [];
 
@@ -47,8 +50,7 @@ class _CalendarDatePicker2WithActionButtonsState
   }
 
   @override
-  void didUpdateWidget(
-      covariant CalendarDatePicker2WithActionButtons oldWidget) {
+  void didUpdateWidget(covariant CalendarWithActionButtons oldWidget) {
     var isValueSame = oldWidget.value.length == widget.value.length;
 
     if (isValueSame) {
@@ -79,20 +81,21 @@ class _CalendarDatePicker2WithActionButtonsState
       children: [
         MediaQuery.removePadding(
           context: context,
-          child: CalendarDatePicker2(
+          child: Calendar(
             value: [..._editCache],
+            style: widget.style,
             config: widget.config,
             onValueChanged: (values) => _editCache = values,
             onDisplayedMonthChanged: widget.onDisplayedMonthChanged,
           ),
         ),
-        SizedBox(height: widget.config.gapBetweenCalendarAndButtons ?? 10),
+        SizedBox(height: widget.style.gapBetweenCalendarAndButtons ?? 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             _buildCancelButton(Theme.of(context).colorScheme, localizations),
-            if ((widget.config.gapBetweenCalendarAndButtons ?? 0) > 0)
-              SizedBox(width: widget.config.gapBetweenCalendarAndButtons),
+            if ((widget.style.gapBetweenCalendarAndButtons ?? 0) > 0)
+              SizedBox(width: widget.style.gapBetweenCalendarAndButtons),
             _buildOkButton(Theme.of(context).colorScheme, localizations),
           ],
         ),
@@ -113,14 +116,14 @@ class _CalendarDatePicker2WithActionButtonsState
         }
       }),
       child: Container(
-        padding: widget.config.buttonPadding ??
+        padding: widget.style.buttonPadding ??
             const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: widget.config.cancelButton ??
             Text(
               localizations.cancelButtonLabel.toUpperCase(),
-              style: widget.config.cancelButtonTextStyle ??
+              style: widget.style.cancelButtonTextStyle ??
                   TextStyle(
-                    color: widget.config.selectedDayHighlightColor ??
+                    color: widget.style.selectedDayHighlightColor ??
                         colorScheme.primary,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
@@ -144,14 +147,14 @@ class _CalendarDatePicker2WithActionButtonsState
         }
       }),
       child: Container(
-        padding: widget.config.buttonPadding ??
+        padding: widget.style.buttonPadding ??
             const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: widget.config.okButton ??
             Text(
               localizations.okButtonLabel.toUpperCase(),
-              style: widget.config.okButtonTextStyle ??
+              style: widget.style.okButtonTextStyle ??
                   TextStyle(
-                    color: widget.config.selectedDayHighlightColor ??
+                    color: widget.style.selectedDayHighlightColor ??
                         colorScheme.primary,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,

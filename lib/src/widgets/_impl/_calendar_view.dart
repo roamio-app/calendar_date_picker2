@@ -1,4 +1,4 @@
-part of '../calendar_date_picker2.dart';
+part of '../calendar.dart';
 
 T? _ambiguate<T>(T? value) => value;
 
@@ -6,6 +6,7 @@ class _CalendarView extends StatefulWidget {
   /// Creates a month picker.
   const _CalendarView({
     required this.config,
+    required this.style,
     required this.initialMonth,
     required this.selectedDates,
     required this.onChanged,
@@ -13,21 +14,30 @@ class _CalendarView extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  /// The calendar configurations
-  final CalendarDatePicker2Config config;
+  /// The calendar configurations.
+  ///
+  final CalendarConfig config;
+
+  /// The calendar's theme.
+  ///
+  final CalendarStyle style;
 
   /// The initial month to display.
+  ///
   final DateTime initialMonth;
 
   /// The currently selected dates.
   ///
   /// Selected dates are highlighted in the picker.
+  ///
   final List<DateTime?> selectedDates;
 
   /// Called when the user picks a day.
+  ///
   final ValueChanged<DateTime> onChanged;
 
   /// Called when the user navigates to a new month.
+  ///
   final ValueChanged<DateTime> onDisplayedMonthChanged;
 
   @override
@@ -298,6 +308,7 @@ class _CalendarViewState extends State<_CalendarView> {
         DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
     return _DayPicker(
       key: ValueKey<DateTime>(month),
+      style: widget.style,
       selectedDates: (widget.selectedDates..removeWhere((d) => d == null))
           .cast<DateTime>(),
       onChanged: _handleDateSelected,
@@ -308,23 +319,24 @@ class _CalendarViewState extends State<_CalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    final Color controlColor =
-        Theme.of(context).colorScheme.onSurface.withOpacity(0.60);
+    final theme = Theme.of(context);
+    final controlColor = theme.colorScheme.onSurface.withOpacity(0.60);
+    final config = widget.config;
+    final style = widget.style;
 
     return Semantics(
       child: Column(
         children: <Widget>[
           Container(
-            padding: widget.config.centerAlignModePicker != true
+            padding: config.centerAlignModePicker != true
                 ? const EdgeInsetsDirectional.only(start: 16, end: 4)
                 : const EdgeInsetsDirectional.only(start: 8, end: 8),
-            height: (widget.config.controlsHeight ?? _subHeaderHeight),
+            height: (style.controlsHeight),
             child: Row(
               children: <Widget>[
-                if (widget.config.centerAlignModePicker != true) const Spacer(),
+                if (config.centerAlignModePicker != true) const Spacer(),
                 IconButton(
-                  icon: widget.config.lastMonthIcon ??
-                      const Icon(Icons.chevron_left),
+                  icon: config.lastMonthIcon ?? const Icon(Icons.chevron_left),
                   color: controlColor,
                   tooltip: _isDisplayingFirstMonth
                       ? null
@@ -332,10 +344,9 @@ class _CalendarViewState extends State<_CalendarView> {
                   onPressed:
                       _isDisplayingFirstMonth ? null : _handlePreviousMonth,
                 ),
-                if (widget.config.centerAlignModePicker == true) const Spacer(),
+                if (config.centerAlignModePicker == true) const Spacer(),
                 IconButton(
-                  icon: widget.config.nextMonthIcon ??
-                      const Icon(Icons.chevron_right),
+                  icon: config.nextMonthIcon ?? const Icon(Icons.chevron_right),
                   color: controlColor,
                   tooltip: _isDisplayingLastMonth
                       ? null
@@ -357,9 +368,9 @@ class _CalendarViewState extends State<_CalendarView> {
                   key: _pageViewKey,
                   controller: _pageController,
                   itemBuilder: _buildItems,
-                  itemCount: DateUtils.monthDelta(
-                          widget.config.firstDate, widget.config.lastDate) +
-                      1,
+                  itemCount:
+                      DateUtils.monthDelta(config.firstDate, config.lastDate) +
+                          1,
                   onPageChanged: _handleMonthPageChanged,
                 ),
               ),

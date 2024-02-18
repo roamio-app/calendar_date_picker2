@@ -1,4 +1,4 @@
-part of '../calendar_date_picker2.dart';
+part of '../calendar.dart';
 
 /// A button that used to toggle the [DatePickerMode] for a date picker.
 ///
@@ -10,6 +10,7 @@ class _DatePickerModeToggleButton extends StatefulWidget {
     required this.title,
     required this.onTitlePressed,
     required this.config,
+    required this.style,
   });
 
   /// The current display of the calendar picker.
@@ -22,7 +23,10 @@ class _DatePickerModeToggleButton extends StatefulWidget {
   final VoidCallback onTitlePressed;
 
   /// The calendar configurations
-  final CalendarDatePicker2Config config;
+  final CalendarConfig config;
+
+  /// The style of the calendar.
+  final CalendarStyle style;
 
   @override
   _DatePickerModeToggleButtonState createState() =>
@@ -73,7 +77,7 @@ class _DatePickerModeToggleButtonState
       padding: widget.config.centerAlignModePicker == true
           ? EdgeInsets.zero
           : const EdgeInsetsDirectional.only(start: 16, end: 4),
-      height: (widget.config.controlsHeight ?? _subHeaderHeight),
+      height: (widget.style.controlsHeight),
       child: Row(
         children: <Widget>[
           if (widget.mode == DatePickerMode.day &&
@@ -86,7 +90,7 @@ class _DatePickerModeToggleButtonState
               excludeSemantics: true,
               button: true,
               child: SizedBox(
-                height: (widget.config.controlsHeight ?? _subHeaderHeight),
+                height: (widget.style.controlsHeight),
                 child: InkWell(
                   onTap: widget.config.disableModePicker == true
                       ? null
@@ -106,7 +110,7 @@ class _DatePickerModeToggleButtonState
                           child: Text(
                             widget.title,
                             overflow: TextOverflow.ellipsis,
-                            style: widget.config.controlsTextStyle ??
+                            style: widget.style.controlsTextStyle ??
                                 textTheme.titleSmall?.copyWith(
                                   color: controlColor,
                                 ),
@@ -119,8 +123,8 @@ class _DatePickerModeToggleButtonState
                                 child: widget.config.customModePickerIcon ??
                                     Icon(
                                       Icons.arrow_drop_down,
-                                      color: widget.config.controlsTextStyle
-                                              ?.color ??
+                                      color: widget
+                                              .style.controlsTextStyle?.color ??
                                           controlColor,
                                     ),
                               ),

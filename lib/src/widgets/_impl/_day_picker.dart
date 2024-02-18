@@ -1,4 +1,4 @@
-part of '../calendar_date_picker2.dart';
+part of '../calendar.dart';
 
 /// Displays the days of a given month and allows choosing a day.
 ///
@@ -7,6 +7,7 @@ part of '../calendar_date_picker2.dart';
 class _DayPicker extends StatefulWidget {
   /// Creates a day picker.
   const _DayPicker({
+    required this.style,
     required this.config,
     required this.displayedMonth,
     required this.selectedDates,
@@ -15,7 +16,10 @@ class _DayPicker extends StatefulWidget {
   }) : super(key: key);
 
   /// The calendar configurations
-  final CalendarDatePicker2Config config;
+  final CalendarConfig config;
+
+  /// The style of the calendar.
+  final CalendarStyle style;
 
   /// The currently selected dates.
   ///
@@ -88,8 +92,7 @@ class _DayPickerState extends State<_DayPicker> {
   List<Widget> _dayHeaders(
       TextStyle? headerStyle, MaterialLocalizations localizations) {
     final List<Widget> result = <Widget>[];
-    final weekdays =
-        widget.config.weekdayLabels ?? localizations.narrowWeekdays;
+    final weekdays = widget.style.weekdayLabels ?? localizations.narrowWeekdays;
     final firstDayOfWeek =
         widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex;
     assert(firstDayOfWeek >= 0 && firstDayOfWeek <= 6,
@@ -100,7 +103,7 @@ class _DayPickerState extends State<_DayPicker> {
         child: Center(
           child: Text(
             weekday,
-            style: widget.config.weekdayLabelTextStyle ?? headerStyle,
+            style: widget.style.weekdayLabelTextStyle ?? headerStyle,
           ),
         ),
       ));
@@ -111,10 +114,13 @@ class _DayPickerState extends State<_DayPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final style = widget.style;
+    final config = widget.config;
+    final ColorScheme colorScheme = theme.colorScheme;
     final MaterialLocalizations localizations =
         MaterialLocalizations.of(context);
-    final TextTheme textTheme = Theme.of(context).textTheme;
+    final TextTheme textTheme = theme.textTheme;
     final TextStyle? headerStyle = textTheme.bodySmall?.apply(
       color: colorScheme.onSurface.withOpacity(0.60),
     );
@@ -130,7 +136,7 @@ class _DayPickerState extends State<_DayPicker> {
 
     final int daysInMonth = DateUtils.getDaysInMonth(year, month);
     final int dayOffset = getMonthFirstDayOffset(year, month,
-        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex);
+        config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex);
 
     final List<Widget> dayItems = _dayHeaders(headerStyle, localizations);
     // 1-based day of month, e.g. 1-31 for January, and 1-29 for February on
@@ -142,14 +148,14 @@ class _DayPickerState extends State<_DayPicker> {
         dayItems.add(Container());
       } else {
         final DateTime dayToBuild = DateTime(year, month, day);
-        final bool isDisabled = dayToBuild.isAfter(widget.config.lastDate) ||
-            dayToBuild.isBefore(widget.config.firstDate) ||
-            !(widget.config.selectableDayPredicate?.call(dayToBuild) ?? true);
+        final bool isDisabled = dayToBuild.isAfter(config.lastDate) ||
+            dayToBuild.isBefore(config.firstDate) ||
+            !(config.selectableDayPredicate?.call(dayToBuild) ?? true);
         final bool isSelectedDay =
             widget.selectedDates.any((d) => DateUtils.isSameDay(d, dayToBuild));
 
         final bool isToday =
-            DateUtils.isSameDay(widget.config.currentDate, dayToBuild);
+            DateUtils.isSameDay(config.currentDate, dayToBuild);
 
         BoxDecoration? decoration;
         Color dayColor = enabledDayColor;
@@ -158,10 +164,9 @@ class _DayPickerState extends State<_DayPicker> {
           // contrasting text color.
           dayColor = selectedDayColor;
           decoration = BoxDecoration(
-            borderRadius: widget.config.dayBorderRadius,
-            color: widget.config.selectedDayHighlightColor ??
-                selectedDayBackground,
-            shape: widget.config.dayBorderRadius != null
+            borderRadius: style.dayBorderRadius,
+            color: style.selectedDayHighlightColor ?? selectedDayBackground,
+            shape: style.dayBorderRadius != null
                 ? BoxShape.rectangle
                 : BoxShape.circle,
           );
@@ -170,22 +175,22 @@ class _DayPickerState extends State<_DayPicker> {
         } else if (isToday) {
           // The current day gets a different text color and a circle stroke
           // border.
-          dayColor = widget.config.selectedDayHighlightColor ?? todayColor;
+          dayColor = style.selectedDayHighlightColor ?? todayColor;
           decoration = BoxDecoration(
-            borderRadius: widget.config.dayBorderRadius,
+            borderRadius: style.dayBorderRadius,
             border: Border.all(color: dayColor),
-            shape: widget.config.dayBorderRadius != null
+            shape: style.dayBorderRadius != null
                 ? BoxShape.rectangle
                 : BoxShape.circle,
           );
         }
 
         var customDayTextStyle =
-            widget.config.dayTextStylePredicate?.call(date: dayToBuild) ??
-                widget.config.dayTextStyle;
+            config.dayTextStylePredicate?.call(date: dayToBuild) ??
+                style.dayTextStyle;
 
-        if (isToday && widget.config.todayTextStyle != null) {
-          customDayTextStyle = widget.config.todayTextStyle;
+        if (isToday && style.todayTextStyle != null) {
+          customDayTextStyle = style.todayTextStyle;
         }
 
         if (isDisabled) {
@@ -193,13 +198,13 @@ class _DayPickerState extends State<_DayPicker> {
             color: disabledDayColor,
             fontWeight: FontWeight.normal,
           );
-          if (widget.config.disabledDayTextStyle != null) {
-            customDayTextStyle = widget.config.disabledDayTextStyle;
+          if (style.disabledDayTextStyle != null) {
+            customDayTextStyle = style.disabledDayTextStyle;
           }
         }
 
         final isFullySelectedRangePicker =
-            widget.config.calendarType == CalendarDatePicker2Type.range &&
+            config.calendarType == CalendarType.range &&
                 widget.selectedDates.length == 2;
         var isDateInBetweenRangePickerSelectedDates = false;
 
@@ -214,18 +219,18 @@ class _DayPickerState extends State<_DayPicker> {
         }
 
         if (isDateInBetweenRangePickerSelectedDates &&
-            widget.config.selectedRangeDayTextStyle != null) {
-          customDayTextStyle = widget.config.selectedRangeDayTextStyle;
+            widget.style.selectedRangeDayTextStyle != null) {
+          customDayTextStyle = widget.style.selectedRangeDayTextStyle;
         }
 
         if (isSelectedDay) {
-          customDayTextStyle = widget.config.selectedDayTextStyle;
+          customDayTextStyle = widget.style.selectedDayTextStyle;
         }
 
         final dayTextStyle =
             customDayTextStyle ?? dayStyle.apply(color: dayColor);
 
-        Widget dayWidget = widget.config.dayBuilder?.call(
+        Widget dayWidget = config.dayBuilder?.call(
               date: dayToBuild,
               textStyle: dayTextStyle,
               decoration: decoration,
@@ -242,9 +247,8 @@ class _DayPickerState extends State<_DayPicker> {
 
         if (isDateInBetweenRangePickerSelectedDates) {
           final rangePickerIncludedDayDecoration = BoxDecoration(
-            color: widget.config.selectedRangeHighlightColor ??
-                (widget.config.selectedDayHighlightColor ??
-                        selectedDayBackground)
+            color: style.selectedRangeHighlightColor ??
+                (style.selectedDayHighlightColor ?? selectedDayBackground)
                     .withOpacity(0.15),
           );
 
@@ -307,8 +311,9 @@ class _DayPickerState extends State<_DayPicker> {
           dayWidget = InkResponse(
             focusNode: _dayFocusNodes[day - 1],
             onTap: () => widget.onChanged(dayToBuild),
-            radius: _dayPickerRowHeight / 2 + 4,
-            splashColor: selectedDayBackground.withOpacity(0.38),
+            radius: style.splashRadius,
+            splashColor: theme.splashColor,
+            splashFactory: theme.splashFactory,
             child: Semantics(
               // We want the day of month to be spoken first irrespective of the
               // locale-specific preferences or TextDirection. This is because
@@ -336,7 +341,9 @@ class _DayPickerState extends State<_DayPicker> {
       child: GridView.custom(
         padding: EdgeInsets.zero,
         physics: const ClampingScrollPhysics(),
-        gridDelegate: _dayPickerGridDelegate,
+        gridDelegate: _DayPickerGridDelegate(
+          style: style,
+        ),
         childrenDelegate: SliverChildListDelegate(
           dayItems,
           addRepaintBoundaries: false,
@@ -373,15 +380,19 @@ class _DayPickerState extends State<_DayPicker> {
 }
 
 class _DayPickerGridDelegate extends SliverGridDelegate {
-  const _DayPickerGridDelegate();
+  const _DayPickerGridDelegate({
+    required this.style,
+  });
+
+  final CalendarStyle style;
 
   @override
   SliverGridLayout getLayout(SliverConstraints constraints) {
     const int columnCount = DateTime.daysPerWeek;
     final double tileWidth = constraints.crossAxisExtent / columnCount;
     final double tileHeight = math.min(
-      _dayPickerRowHeight,
-      constraints.viewportMainAxisExtent / (_maxDayPickerRowCount + 1),
+      style.daySize.height,
+      constraints.viewportMainAxisExtent / (_kMaxDayPickerRowCount + 1),
     );
     return SliverGridRegularTileLayout(
       childCrossAxisExtent: tileWidth,
@@ -396,5 +407,3 @@ class _DayPickerGridDelegate extends SliverGridDelegate {
   @override
   bool shouldRelayout(_DayPickerGridDelegate oldDelegate) => false;
 }
-
-const _DayPickerGridDelegate _dayPickerGridDelegate = _DayPickerGridDelegate();
