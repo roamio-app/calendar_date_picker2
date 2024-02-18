@@ -157,18 +157,15 @@ class _DayPickerState extends State<_DayPicker> {
         final bool isToday =
             DateUtils.isSameDay(config.currentDate, dayToBuild);
 
-        BoxDecoration? decoration;
+        Decoration? decoration;
         Color dayColor = enabledDayColor;
         if (isSelectedDay) {
           // The selected day gets a circle background highlight, and a
           // contrasting text color.
           dayColor = selectedDayColor;
-          decoration = BoxDecoration(
-            borderRadius: style.dayBorderRadius,
+          decoration = ShapeDecoration(
             color: style.selectedDayHighlightColor ?? selectedDayBackground,
-            shape: style.dayBorderRadius != null
-                ? BoxShape.rectangle
-                : BoxShape.circle,
+            shape: style.dayShapeBorder ?? const CircleBorder(),
           );
         } else if (isDisabled) {
           dayColor = disabledDayColor;
@@ -176,12 +173,11 @@ class _DayPickerState extends State<_DayPicker> {
           // The current day gets a different text color and a circle stroke
           // border.
           dayColor = style.selectedDayHighlightColor ?? todayColor;
-          decoration = BoxDecoration(
-            borderRadius: style.dayBorderRadius,
-            border: Border.all(color: dayColor),
-            shape: style.dayBorderRadius != null
-                ? BoxShape.rectangle
-                : BoxShape.circle,
+          decoration = ShapeDecoration(
+            shape: style.dayShapeBorder ??
+                CircleBorder(
+                  side: BorderSide(color: dayColor),
+                ),
           );
         }
 
@@ -314,6 +310,7 @@ class _DayPickerState extends State<_DayPicker> {
             radius: style.splashRadius,
             splashColor: theme.splashColor,
             splashFactory: theme.splashFactory,
+            customBorder: style.dayShapeBorder,
             child: Semantics(
               // We want the day of month to be spoken first irrespective of the
               // locale-specific preferences or TextDirection. This is because
@@ -353,7 +350,7 @@ class _DayPickerState extends State<_DayPicker> {
   }
 
   Widget _buildDefaultDayWidgetContent(
-    BoxDecoration? decoration,
+    Decoration? decoration,
     MaterialLocalizations localizations,
     int day,
     TextStyle dayTextStyle,

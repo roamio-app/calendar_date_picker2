@@ -17,7 +17,7 @@ typedef CalendarDayTextStylePredicate = TextStyle? Function({
 typedef CalendarDayBuilder = Widget? Function({
   required DateTime date,
   TextStyle? textStyle,
-  BoxDecoration? decoration,
+  Decoration? decoration,
   bool? isSelected,
   bool? isDisabled,
   bool? isToday,
@@ -26,7 +26,7 @@ typedef CalendarDayBuilder = Widget? Function({
 typedef CalendarYearBuilder = Widget? Function({
   required int year,
   TextStyle? textStyle,
-  BoxDecoration? decoration,
+  Decoration? decoration,
   bool? isSelected,
   bool? isDisabled,
   bool? isCurrentYear,

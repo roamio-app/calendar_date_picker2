@@ -117,20 +117,24 @@ class _YearPickerState extends State<YearPicker> {
       itemStyle = widget.style.selectedYearTextStyle ?? itemStyle;
     }
 
-    BoxDecoration? decoration;
+    Decoration? decoration;
     if (isSelected) {
-      decoration = BoxDecoration(
+      decoration = ShapeDecoration(
         color: widget.style.selectedDayHighlightColor ?? colorScheme.primary,
-        borderRadius: widget.style.yearBorderRadius ??
-            BorderRadius.circular(decorationHeight / 2),
+        shape: widget.style.yearShapeBorder ??
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(decorationHeight / 2),
+            ),
       );
     } else if (isCurrentYear && !isDisabled) {
-      decoration = BoxDecoration(
-        border: Border.all(
-          color: widget.style.selectedDayHighlightColor ?? colorScheme.primary,
-        ),
-        borderRadius: widget.style.yearBorderRadius ??
-            BorderRadius.circular(decorationHeight / 2),
+      decoration = ShapeDecoration(
+        shape: widget.style.yearShapeBorder ??
+            RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(decorationHeight / 2),
+                side: BorderSide(
+                  color: widget.style.selectedDayHighlightColor ??
+                      colorScheme.primary,
+                )),
       );
     }
 

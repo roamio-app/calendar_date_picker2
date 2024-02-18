@@ -12,8 +12,8 @@ class CalendarStyle {
     this.todayTextStyle,
     this.yearTextStyle,
     this.selectedYearTextStyle,
-    this.dayBorderRadius,
-    this.yearBorderRadius,
+    this.dayShapeBorder,
+    this.yearShapeBorder,
     this.selectedDayHighlightColor,
     this.selectedRangeHighlightColor,
     this.controlsHeight = 52.0,
@@ -97,13 +97,13 @@ class CalendarStyle {
   ///
   final double? gapBetweenCalendarAndButtons;
 
-  /// Custom border radius for calendar days.
+  /// Custom border for calendar days.
   ///
-  final BorderRadius? dayBorderRadius;
+  final ShapeBorder? dayShapeBorder;
 
-  /// Custom border radius for year labels.
+  /// Custom border for year labels.
   ///
-  final BorderRadius? yearBorderRadius;
+  final ShapeBorder? yearShapeBorder;
 
   /// Custom highlight color for selected day(s).
   ///
@@ -153,8 +153,8 @@ class CalendarStyle {
     TextStyle? todayTextStyle,
     TextStyle? yearTextStyle,
     TextStyle? selectedYearTextStyle,
-    BorderRadius? dayBorderRadius,
-    BorderRadius? yearBorderRadius,
+    ShapeBorder? dayShapeBorder,
+    ShapeBorder? yearShapeBorder,
     Color? selectedDayHighlightColor,
     Color? selectedRangeHighlightColor,
     double? controlsHeight,
@@ -173,8 +173,8 @@ class CalendarStyle {
       yearTextStyle: yearTextStyle ?? this.yearTextStyle,
       selectedYearTextStyle:
           selectedYearTextStyle ?? this.selectedYearTextStyle,
-      dayBorderRadius: dayBorderRadius ?? this.dayBorderRadius,
-      yearBorderRadius: yearBorderRadius ?? this.yearBorderRadius,
+      dayShapeBorder: dayShapeBorder ?? this.dayShapeBorder,
+      yearShapeBorder: yearShapeBorder ?? this.yearShapeBorder,
       selectedDayHighlightColor:
           selectedDayHighlightColor ?? this.selectedDayHighlightColor,
       selectedRangeHighlightColor:
