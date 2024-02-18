@@ -17,7 +17,7 @@ class CalendarStyle {
     this.selectedDayHighlightColor,
     this.selectedRangeHighlightColor,
     this.controlsHeight = 52.0,
-    this.daySize = const Size(40.0, 40.0),
+    this.dayCellHeight = 40.0,
     this.cancelButtonTextStyle,
     this.okButtonTextStyle,
     this.buttonPadding,
@@ -124,28 +124,28 @@ class CalendarStyle {
 
   /// The size of the day cells.
   ///
-  /// Defaults to 40.0 x 40.0.
+  /// Defaults to 40.0.
   ///
-  final Size daySize;
+  final double dayCellHeight;
 
   /// Splash Factory of the [InkResponse] widget that responds to tap.
   ///
   final InteractiveInkFeatureFactory? splashFactory;
 
   /// The splash radius of the [InkResponse] widget that responds to tap.
-  /// 
+  ///
   final double splashRadius;
 
   /// The height of the year picker row.
-  /// 
+  ///
   final double yearPickerRowHeight;
 
   /// The spacing between year picker rows.
-  /// 
+  ///
   final double yearPickerRowSpacing;
 
   /// The padding of the year picker.
-  /// 
+  ///
   final double yearPickerPadding;
 
   CalendarStyle copyWith({
@@ -163,7 +163,7 @@ class CalendarStyle {
     Color? selectedDayHighlightColor,
     Color? selectedRangeHighlightColor,
     double? controlsHeight,
-    Size? daySize,
+    double? dayCellHeight,
   }) {
     return CalendarStyle(
       weekdayLabels: weekdayLabels ?? this.weekdayLabels,
@@ -185,7 +185,7 @@ class CalendarStyle {
       selectedRangeHighlightColor:
           selectedRangeHighlightColor ?? this.selectedRangeHighlightColor,
       controlsHeight: controlsHeight ?? this.controlsHeight,
-      daySize: daySize ?? this.daySize,
+      dayCellHeight: dayCellHeight ?? this.dayCellHeight,
     );
   }
 }

@@ -391,7 +391,7 @@ class _DayPickerGridDelegate extends SliverGridDelegate {
     const int columnCount = DateTime.daysPerWeek;
     final double tileWidth = constraints.crossAxisExtent / columnCount;
     final double tileHeight = math.min(
-      style.daySize.height,
+      style.dayCellHeight,
       constraints.viewportMainAxisExtent / (_kMaxDayPickerRowCount + 1),
     );
     return SliverGridRegularTileLayout(

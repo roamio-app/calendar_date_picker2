@@ -319,7 +319,7 @@ class _CalendarState extends State<Calendar> {
       children: <Widget>[
         SizedBox(
           height: (widget.style.controlsHeight) +
-              widget.style.daySize.height * (_kMaxDayPickerRowCount + 1),
+              widget.style.dayCellHeight * (_kMaxDayPickerRowCount + 1),
           child: _buildPicker(),
         ),
         // Put the mode toggle button on top so that it won't be covered up by the _CalendarView
