@@ -90,23 +90,21 @@ class _DatePickerModeToggleButtonState
               excludeSemantics: true,
               button: true,
               child: SizedBox(
-                height: (widget.style.controlsHeight),
+                height: widget.style.controlsHeight,
                 child: CupertinoButton(
-                  onPressed: widget.config.disableModePicker == true
+                  onPressed: widget.config.disableModePicker
                       ? null
                       : widget.onTitlePressed,
                   padding: EdgeInsets.zero,
                   minSize: 0.0,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: widget.config.centerAlignModePicker == true
-                            ? 0
-                            : 8),
+                        horizontal:
+                            widget.config.centerAlignModePicker ? 0 : 8),
                     child: Row(
-                      mainAxisAlignment:
-                          widget.config.centerAlignModePicker == true
-                              ? MainAxisAlignment.center
-                              : MainAxisAlignment.start,
+                      mainAxisAlignment: widget.config.centerAlignModePicker
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.start,
                       children: <Widget>[
                         Flexible(
                           child: Text(

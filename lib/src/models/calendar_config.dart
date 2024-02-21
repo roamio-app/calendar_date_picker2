@@ -56,8 +56,8 @@ class CalendarConfig {
     this.dayTextStylePredicate,
     this.dayBuilder,
     this.yearBuilder,
-    this.disableModePicker,
-    this.centerAlignModePicker,
+    this.disableModePicker = false,
+    this.centerAlignModePicker = false,
     this.customModePickerIcon,
     this.modePickerTextHandler,
     this.rangeBidirectional = false,
@@ -104,10 +104,10 @@ class CalendarConfig {
   final CalendarYearBuilder? yearBuilder;
 
   /// Flag to disable mode picker and hide the mode toggle button icon
-  final bool? disableModePicker;
+  final bool disableModePicker;
 
   /// Flag to centralize year and month text label in controls
-  final bool? centerAlignModePicker;
+  final bool centerAlignModePicker;
 
   /// Custom icon for the mode picker button icon
   final Widget? customModePickerIcon;
