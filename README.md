@@ -4,7 +4,7 @@
 - Controls over the dimensions of the calendar.
 - Improved theming.
 
-## Original Config Options (all are preserved)
+## Original Config Options (not all are preserved in this fork; may be outdated)
 
 ### Config options
 
